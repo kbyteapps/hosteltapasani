@@ -444,7 +444,30 @@
   </div>
   <script src="https://www.gstatic.com/firebasejs/7.14.5/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/7.14.5/firebase-firestore.js"></script>
+<script>
 
+function downloadPDF() {
+
+var downloadBtn = document.getElementById('downloadBtn');
+downloadBtn.style.display = 'none';
+
+var element = document.getElementById("makepdf");
+html2pdf(element, {
+  margin: 20,
+  filename: "tapasani_form",
+  image: { type: "jpeg", quality: 0.98 },
+  html2canvas: { scale: 2 },
+  pagebreak: { mode: ['avoid-all'] },
+  jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+}).save().then(function () {
+  downloadBtn.style.display = 'inline-block';
+});;
+
+
+
+}
+
+</script>
   <script type="module">
 
     
@@ -468,27 +491,6 @@
     //     document.getElementById("downloadBtn").style.display = "block";
     //   });
     // }
-
-    function downloadPDF() {
-
-      var downloadBtn = document.getElementById('downloadBtn');
-      downloadBtn.style.display = 'none';
-
-      var element = document.getElementById("makepdf");
-      html2pdf(element, {
-        margin: 20,
-        filename: "tapasani_form",
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2 },
-        pagebreak: { mode: ['avoid-all'] },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-      }).save().then(function () {
-        downloadBtn.style.display = 'inline-block';
-      });;
-
-
-
-    }
 
     document.addEventListener("DOMContentLoaded", function () {
       const firebaseConfig = {
@@ -544,19 +546,11 @@ firebase.initializeApp(firebaseConfig);
         // console.log(data)
         const details = data["details"];
         console.log(details)
-        var  selectedOptionForSahityaDileKa =
-          details['selectedOptionForSahityaDileKa'] == "होय" ? "Yes" : "No" ;
-     var selectedOptionForVijechiSoyAahe =
-          details['selectedOptionForVijechiSoyAahe'] == "होय" ? "Yes" : "No" ;
-     var selectedOptionForBathroomVijechiSoyAahe =
-          details['selectedOptionForBathroomVijechiSoyAahe']  == "होय" ? "Yes" : "No" ;
-      var selectedOptionForMasikPaliNondvahi =
-          details['selectedOptionForMasikPaliNondvahi'] == "होय" ? "Yes" : "No" ;
 
-          details["sahityaDileAheKa"] = selectedOptionForSahityaDileKa == "Yes" ? "होय" : "नाही, "+ details["sahityaDileAheKa"] ;
-          details["vijKehwaPravnar"] = selectedOptionForVijechiSoyAahe == "Yes" ? "होय" : "नाही, "+ details["vijKehwaPravnar"];
-          details["bathroomVijKehwaPuravnar"] = selectedOptionForBathroomVijechiSoyAahe == "Yes" ? "होय" : "नाही, "+ details["bathroomVijKehwaPuravnar"];
-           details["masikPaliNondvahiTruti"] = selectedOptionForMasikPaliNondvahi == "Yes" ? "होय, " + details['masikPaliNondvahiTruti'] : "नाही";
+          details["sahityaDileAheKa"] = details['selectedOptionForSahityaDileKa'] == "होय" ? "होय" : "नाही, "+ details["sahityaDileAheKa"] ;
+          details["vijKehwaPravnar"] = details['selectedOptionForVijechiSoyAahe'] == "होय" ? "होय" : "नाही, "+ details["vijKehwaPravnar"];
+          details["bathroomVijKehwaPuravnar"] = details['selectedOptionForBathroomVijechiSoyAahe'] == "होय" ? "होय" : "नाही, "+ details["bathroomVijKehwaPuravnar"];
+           details["masikPaliNondvahiTruti"] = details['selectedOptionForMasikPaliNondvahi'] == "होय" ? "होय, " + details['masikPaliNondvahiTruti'] : "नाही";
 
 
         // call display function 
