@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  
+    <!-- <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-database.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
+    <!-- <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script> -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Table Example</title>
@@ -86,7 +91,7 @@
     } */
   </style>
 </head>
-<body>
+<body >
     <div class="container" id="makepdf">
         <div id="title">शासकीय वसतिगृहे तपासणी पक्षीक अहवाल</div>
   <table id="myTable">
@@ -437,8 +442,19 @@
 
   <button id="downloadBtn" onclick="downloadPDF()">Download PDF</button>
   </div>
-  <script>
+  <script src="https://www.gstatic.com/firebasejs/7.14.5/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.14.5/firebase-firestore.js"></script>
+
+  <script type="module">
+
     
+
+    // import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js';
+  // import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js';
+  // import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+  // import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+
+  // import { getFirestore, ref, set } from "https://www.gstatic.com/firebasejs/9.15.0/firestore-database.js";
     // function previewPDF() {
 
     //   var element = document.getElementById("makepdf");
@@ -475,21 +491,101 @@
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-      // Function to get query parameters from the URL
-      function getQueryParams() {
-        var queryParams = {};
-        var queryString = window.location.search.substring(1);
-        var pairs = queryString.split('&');
+      const firebaseConfig = {
+  apiKey: "AIzaSyCeBV6grDqn4vplLRydrpefMzo40z9BMmg",
+  authDomain: "hosteltapasani.firebaseapp.com",
+  projectId: "hosteltapasani",
+  storageBucket: "hosteltapasani.appspot.com",
+  messagingSenderId: "494489001041",
+  appId: "1:494489001041:web:6bf8a4454a69ba2d2eec70",
+  measurementId: "G-QWZQ51CS96"
+};
+// const firebaseApp = initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
+ 
+// Initialize Firestore
+// const firestore =  firebaseApp.getFirestore(firebaseApp);
 
-        for (var i = 0; i < pairs.length; i++) {
-          var pair = pairs[i].split('=');
-          queryParams[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
-        }
+   // Get the JSON data from the URL
+  //  var queryParams = getQueryParams();
+      // var jsonData = queryParams.json ? JSON.parse(decodeURIComponent(queryParams.json)) : {};
 
-        return queryParams;
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      const docId = urlParams.get('docId');
+
+      if (docId) {
+        // Do something with the document ID
+        // console.log('Document ID:', docId);
+
+        // Now you can use docId in your Firestore query or any other logic
+        // Example: getDocumentById(docId);
+      } else {
+        console.error('Document ID not found in the query parameter');
       }
+      // console.log(queryParams)
+      getDocumentById(docId);
+      // Call the function with the retrieved JSON data
+      // displayJsonData(jsonData);
 
-      // Function to display JSON data on the HTML page
+  function getDocumentById(documentId) {
+    // const firestore = firebaseApp.getFirestore();
+    // const db = firebaseApp.firestore();
+    var firestore = firebase.firestore();
+    // Reference to the document
+    const docRef = firestore.collection("tableForm").doc(documentId);
+    
+    // Get the document
+    docRef.get().then((doc) => {
+      if (doc.exists) {
+        // Document data
+        const data = doc.data();
+        // const jsonData = JSON.parse(data);
+        // console.log(data)
+        const details = data["details"];
+        console.log(details)
+        var  selectedOptionForSahityaDileKa =
+          details['selectedOptionForSahityaDileKa'] == "होय" ? "Yes" : "No" ;
+     var selectedOptionForVijechiSoyAahe =
+          details['selectedOptionForVijechiSoyAahe'] == "होय" ? "Yes" : "No" ;
+     var selectedOptionForBathroomVijechiSoyAahe =
+          details['selectedOptionForBathroomVijechiSoyAahe']  == "होय" ? "Yes" : "No" ;
+      var selectedOptionForMasikPaliNondvahi =
+          details['selectedOptionForMasikPaliNondvahi'] == "होय" ? "Yes" : "No" ;
+
+          details["sahityaDileAheKa"] = selectedOptionForSahityaDileKa == "Yes" ? "होय" : "नाही, "+ details["sahityaDileAheKa"] ;
+          details["vijKehwaPravnar"] = selectedOptionForVijechiSoyAahe == "Yes" ? "होय" : "नाही, "+ details["vijKehwaPravnar"];
+          details["bathroomVijKehwaPuravnar"] = selectedOptionForBathroomVijechiSoyAahe == "Yes" ? "होय" : "नाही, "+ details["bathroomVijKehwaPuravnar"];
+           details["masikPaliNondvahiTruti"] = selectedOptionForMasikPaliNondvahi == "Yes" ? "होय, " + details['masikPaliNondvahiTruti'] : "नाही";
+
+
+        // call display function 
+        // console.log(jsonData)
+        displayJsonData(details);
+      } else {
+        
+      }
+    }).catch((error) => {
+      console.error("Error getting document:", error);
+    });
+  }
+        
+
+      // Function to get query parameters from the URL
+      // function getQueryParams() {
+      //   var queryParams = {};
+      //   var queryString = window.location.search.substring(1);
+      //   var pairs = queryString.split('&');
+
+      //   for (var i = 0; i < pairs.length; i++) {
+      //     var pair = pairs[i].split('=');
+      //     queryParams[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
+      //   }
+
+      //   return queryParams;
+      // }
+
+      // // Function to display JSON data on the HTML page
       function displayJsonData(data) {
 
         // document.getElementById("vastigruhacheNav").innerHTML = data["vastigruhacheNav"];
@@ -510,12 +606,7 @@
         }
       }
 
-      // Get the JSON data from the URL
-      var queryParams = getQueryParams();
-      var jsonData = queryParams.json ? JSON.parse(decodeURIComponent(queryParams.json)) : {};
-      console.log(queryParams)
-      // Call the function with the retrieved JSON data
-      displayJsonData(jsonData);
+     
     });
 
   </script>
